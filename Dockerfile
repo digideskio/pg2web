@@ -10,10 +10,17 @@ ENV BUILD_DIR /nginx
 
 RUN mkdir $BUILD_DIR && mkdir $SOURCE_DIR && cd $SOURCE_DIR && curl -o openresty.tar.gz $URL && tar xzvf openresty.tar.gz && mv $VERSION openresty && rm -rf openresty.tar.gz
 
-RUN cd $SOURCE_DIR/openresty && ./configure --prefix=$BUILD_DIR \
-  --with-http_postgres_module \
-  -j4 \
-  && make && make install
+RUN apt-get install -yqq git
+# replace with fixed ngx_postgres
+RUN cd $SOURCE_DIR \
+  && git clone https://github.com/niquola/ngx_postgres \
+  && ls -lah $SOURCE_DIR/openresty/bundle \
+  && rm -rf openresty/bundle/ngx_postgres-1.0rc5 \
+  && ln -s $SOURCE_DIR/ngx_postgres openresty/bundle/ngx_postgres-1.0rc \
+  && ls -lah openresty/bundle
+
+RUN cd $SOURCE_DIR/openresty && ./configure --prefix=$BUILD_DIR --with-http_postgres_module -j8
+RUN cd $SOURCE_DIR/openresty && make && make install
 
 COPY nginx.conf $BUILD_DIR/nginx/conf/
 COPY run.sh /
