@@ -41,6 +41,8 @@ ENV DATABASE_URL postgres://root:root@localhost:5432/fhirbase
 
 RUN echo 'until psql postgres -c "select 1"; do tail /var/log/postgresql/*.log; sleep 5; done;' > waitpg
 
+RUN echo "plv8.start_proc='plv8_init'" >> /etc/postgresql/9.4/main/postgresql.conf
+
 RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
     && bash waitpg \
