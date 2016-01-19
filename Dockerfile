@@ -42,6 +42,7 @@ ENV DATABASE_URL postgres://root:root@localhost:5432/fhirbase
 RUN echo 'until psql postgres -c "select 1"; do tail /var/log/postgresql/*.log; sleep 5; done;' > waitpg
 
 RUN echo "plv8.start_proc='plv8_init'" >> /etc/postgresql/9.4/main/postgresql.conf
+COPY seed.sql /
 
 RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
@@ -50,6 +51,7 @@ RUN /etc/init.d/postgresql start \
     && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v0.0.1-beta.7/fhirbase-0.0.1-beta.7.sql.zip -O fhirbase.sql.zip \
     && unzip fhirbase.sql.zip \
     && cat fhirbase-0.0.1-beta.7.sql | psql fhirbase \
+    && cat /seed.sql | psql fhirbase \
     && pg_ctlcluster -m smart 9.4 main stop
 
 CMD /run.sh
