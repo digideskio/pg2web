@@ -22,6 +22,11 @@
    :family [(name/last-name)],
    :text "JEAN SANDY JACK"})
 
+(defn rand-year []
+  (+ 1940 (rand-int 70)))
+
+(rand-year)
+
 
 (defn gen-uuid []
   (.toString  (java.util.UUID/randomUUID)))
@@ -65,7 +70,7 @@
   {:address [(mk-address)],
    :deceasedBoolean "N",
    :name [(mk-name)],
-   :birthDate "1944-10-12T00:00:00.000Z",
+   :birthDate (str (rand-year) "-10-12T00:00:00.000Z"),
    :resourceType "Patient",
    :id (mk-id),
    :identifier (mk-pt-ids),
@@ -166,10 +171,13 @@
       (wrap-insert (mk-report pt))]))
 
 
+
+(def file "/home/aitem/Work/pg2web/seed.sql")
+
 (comment 
   (pp/pprint (wrap-insert (mk-patient)))
   (do  
-    (spit "/home/aitem/Work/trash/marat/foo.sql" (str/join "\n"  
+    (spit file (str/join "\n"  
       ["SET plv8.start_proc = 'plv8_init';"
        "SELECT fhir_create_storage('{\"resourceType\": \"Patient\"}'::json);"
        "SELECT fhir_create_storage('{\"resourceType\": \"Coverage\"}'::json);"
@@ -180,13 +188,14 @@
        "SELECT fhir_create_storage('{\"resourceType\": \"DiagnosticReport\"}'::json);\n"]))
 
     (dotimes [n 100]
-      (spit "/home/aitem/Work/trash/marat/foo.sql" (str/join "\n" (patient-bundle) ):append true)))
+      (spit file (str/join "\n" (patient-bundle) ):append true)))
 
 
   (pp/pprint (to-json (mk-patient)))
   (keyword (str/lower-case (:resourceType (mk-patient))))
 
   (str/replace "The color is ' red" #"'" "''")
+  (mod (int (+ 110 (rand 100))) 100)
 
   
   )
