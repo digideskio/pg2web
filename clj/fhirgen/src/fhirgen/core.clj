@@ -1,4 +1,5 @@
 (ns fhirgen.core
+  (:import (java.text SimpleDateFormat) )
   (:require [clojure.string :as str]
             [clojure.pprint :as pp]  
             [faker.name :as name]
@@ -25,7 +26,15 @@
 (defn rand-year []
   (+ 1940 (rand-int 70)))
 
-(rand-year)
+(defn date 
+  ([]
+    (.format 
+      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmZ")
+      (java.util.Date.  (* 1000  (- (long  (rand-int 2000000000)) 1000000000)) )))
+  ([offset] 
+    (.format 
+      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmZ")
+      (java.util.Date.  (- (long (System/currentTimeMillis)) (* 1000 (rand-int offset)))))))
 
 
 (defn gen-uuid []
@@ -67,17 +76,16 @@
     :type {:text "Social Security Number"}}])
 
 (defn mk-patient []
-  {:address [(mk-address)],
-   :deceasedBoolean "N",
-   :name [(mk-name)],
-   :birthDate (str (rand-year) "-10-12T00:00:00.000Z"),
-   :resourceType "Patient",
-   :id (mk-id),
-   :identifier (mk-pt-ids),
-   :telecom [(mk-telecome)],
-   :gender "female",
+  {:address [(mk-address)]
+   :deceasedBoolean "N"
+   :name [(mk-name)]
+   :birthDate (date) 
+   :resourceType "Patient"
+   :id (mk-id)
+   :identifier (mk-pt-ids)
+   :telecom [(mk-telecome)]
+   :gender "female"
    :contact [(mk-contact)]})
-
 
 (defn resource-ref [res] {:reference (str (:resourceType  res) "/" (:id res))})
 
@@ -100,35 +108,37 @@
 
 (defn mk-location []
   {:id (mk-id)
-   :resourceType "Location",
-   :status "active",
-   :identifier [{:value (mk-identifier)}],
-   :building "S",
-   :room "101",
-   :bed "1",
+   :resourceType "Location"
+   :status "active"
+   :identifier [{:value (mk-identifier)}]
+   :building "S"
+   :room "101"
+   :bed "1"
    :name (mk-company-name)})
 
 (defn mk-practitioner []
   {:id (mk-id)
    :resourceType "Practitioner",
-   :identifier [{:value (mk-identifier)}],
-   :name {:given [(name/first-name)],
-          :middle [(name/prefix)],
+   :identifier [{:value (mk-identifier)}]
+   :name {:given [(name/first-name)]
+          :middle [(name/prefix)]
           :family [(name/last-name)]}})
 
 (defn mk-encounter [pt atnd adm loc]
   {:id (mk-id)
-   :resourceType "Encounter",
+   :resourceType "Encounter"
    :patient (resource-ref pt)
    :participant [{:type {:coding [{:code "ATND",:system "http://hl7.org/fhir/v3/ParticipationType"}]},
                   :individual (resource-ref atnd)}
                  {:type {:coding [{:code "ADM",:system "http://hl7.org/fhir/v3/ParticipationType"}]},
-                  :individual (resource-ref adm)}],
-   :status "planned",
-   :class "I",
-   :identifier [{:value (mk-identifier)}],
-   :period {:start "2016-01-23T21:06:33.000Z"},
+                  :individual (resource-ref adm)}]
+   :status "planned"
+   :class "I"
+   :identifier [{:value (mk-identifier)}]
+   :period {:start  (date 5356800) }
+
    :location {:location (resource-ref loc) :status "active"}})
+
 
 (defn mk-report [pt]
   {:id (mk-id)
@@ -196,9 +206,6 @@
 
   (str/replace "The color is ' red" #"'" "''")
   (mod (int (+ 110 (rand 100))) 100)
-
   
   )
-
-
 
