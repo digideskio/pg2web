@@ -29,11 +29,11 @@
 (defn date 
   ([]
     (.format 
-      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmZ")
+      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmX")
       (java.util.Date.  (* 1000  (- (long  (rand-int 2000000000)) 1000000000)) )))
   ([offset] 
     (.format 
-      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmZ")
+      (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mmX")
       (java.util.Date.  (- (long (System/currentTimeMillis)) (* 1000 (rand-int offset)))))))
 
 
