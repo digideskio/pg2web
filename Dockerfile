@@ -1,5 +1,7 @@
 FROM ubuntu:15.10
-MAINTAINER Nikolay Ryzhikov <niquola@gmail.com>, Pavel Bubentsov <bazzy.bazzy@gmail.com>
+MAINTAINER Nikolay Ryzhikov <niquola@gmail.com>, \
+           Pavel Bubentsov <bazzy.bazzy@gmail.com>, \
+           Marat <muradbei@gmail.com>
 
 RUN apt-get update && apt-get install -yqq libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make curl wget build-essential libpq-dev  unzip
 
