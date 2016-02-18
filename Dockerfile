@@ -53,7 +53,6 @@ RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
     && bash waitpg \
     && createdb fhirbase \
-    && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v${FBVERSION}/fhirbase-${FBVERSION}.sql.zip -O fhirbase.sql.zip \
     && curl --location \
        https://github.com/fhirbase/fhirbase-plv8/releases/download/v$FBVERSION/fhirbase-$FBVERSION.sql.zip \
     | funzip \
