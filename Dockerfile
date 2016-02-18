@@ -1,7 +1,8 @@
 FROM ubuntu:15.10
 MAINTAINER Nikolay Ryzhikov <niquola@gmail.com>, \
            Pavel Bubentsov <bazzy.bazzy@gmail.com>, \
-           Marat <muradbei@gmail.com>
+           Marat <muradbei@gmail.com>, \
+           Danil Kutkevich <danil@kutkevich.org>
 
 RUN apt-get update && apt-get install -yqq libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make curl wget build-essential libpq-dev  unzip
 
@@ -50,7 +51,7 @@ RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
     && bash waitpg \
     && createdb fhirbase \
-    && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v0.0.1-beta.7/fhirbase-0.0.1-beta.7.sql.zip -O fhirbase.sql.zip \
+    && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v0.0.1-beta.18/fhirbase-0.0.1-beta.18.sql.zip -O fhirbase.sql.zip \
     && unzip fhirbase.sql.zip \
     && cat fhirbase-0.0.1-beta.7.sql | psql fhirbase \
     && cat /seed.sql | psql fhirbase \
