@@ -47,13 +47,17 @@ RUN echo 'until psql postgres -c "select 1"; do tail /var/log/postgresql/*.log; 
 RUN echo "plv8.start_proc='plv8_init'" >> /etc/postgresql/9.4/main/postgresql.conf
 COPY seed.sql /
 
+ENV FBVERSION 0.0.1-beta.18
+
 RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
     && bash waitpg \
     && createdb fhirbase \
-    && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v0.0.1-beta.18/fhirbase-0.0.1-beta.18.sql.zip -O fhirbase.sql.zip \
-    && unzip fhirbase.sql.zip \
-    && cat fhirbase-0.0.1-beta.7.sql | psql fhirbase \
+    && wget https://github.com/fhirbase/fhirbase-plv8/releases/download/v${FBVERSION}/fhirbase-${FBVERSION}.sql.zip -O fhirbase.sql.zip \
+    && curl --location \
+       https://github.com/fhirbase/fhirbase-plv8/releases/download/v$FBVERSION/fhirbase-$FBVERSION.sql.zip \
+    | funzip \
+    | psql fhirbase \
     && cat /seed.sql | psql fhirbase \
     && pg_ctlcluster -m smart 9.4 main stop
 
