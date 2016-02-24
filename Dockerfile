@@ -47,7 +47,7 @@ RUN echo 'until psql postgres -c "select 1"; do tail /var/log/postgresql/*.log; 
 RUN echo "plv8.start_proc='plv8_init'" >> /etc/postgresql/9.4/main/postgresql.conf
 COPY seed.sql /
 
-ENV FBVERSION 0.0.1-beta.18
+ENV FBVERSION 0.0.1-beta.19
 
 RUN /etc/init.d/postgresql start \
     && su postgres -c "psql --command \"CREATE USER root WITH SUPERUSER PASSWORD 'root';\"" \
